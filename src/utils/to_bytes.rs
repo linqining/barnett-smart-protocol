@@ -5,7 +5,7 @@ macro_rules! to_bytes {
     ($($x:expr),*) => ({
         let mut buf = vec![];
         $(
-            let _ = $x.serialize_compressed(&mut buf).map_err(|e| crate::error::CardProtocolError::IoError(e.to_string()));
+            let _ = $x.serialize_compressed(&mut buf).map_err(|e| $crate::error::CardProtocolError::IoError(e.to_string()));
         )*
         Ok(buf)
     })

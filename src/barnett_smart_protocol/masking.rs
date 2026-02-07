@@ -25,7 +25,8 @@ mod test {
     use crate::BarnettSmartProtocol;
 
     use ark_ff::UniformRand;
-    use ark_std::{rand::Rng, Zero};
+    use ark_std::rand::Rng;
+    use ark_ec::AffineRepr;
     use proof_base::error::CryptoError;
     use proof_base::zkp::proofs::chaum_pedersen_dl_equality;
     use ark_std::rand::thread_rng;
@@ -55,7 +56,7 @@ mod test {
 
         for i in 0..parameters.n {
             players.push(CardProtocol::player_keygen(rng, &parameters).unwrap());
-            expected_shared_key = expected_shared_key + players[i].0
+            expected_shared_key = (expected_shared_key + players[i].0).into();
         }
 
         (players, expected_shared_key)

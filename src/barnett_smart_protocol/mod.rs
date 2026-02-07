@@ -393,12 +393,12 @@ impl<C: CurveGroup> BarnettSmartProtocol for DLCards<C> {
         masking_factors: &Vec<Self::Scalar>,
         permutation: &Permutation,
     ) -> Result<(Vec<Self::MaskedCard>, Self::ZKProofShuffle), CardProtocolError> {
-        let permuted_deck = permutation.permute_array(&deck);
+        let permuted_deck = permutation.permute_array(deck);
         let masked_shuffled = permuted_deck
             .iter()
             .zip(masking_factors.iter())
             .map(|(masked_card, masking_factor)| {
-                masked_card.remask(&pp.enc_parameters, &shared_key, masking_factor)
+                masked_card.remask(&pp.enc_parameters, shared_key, masking_factor)
             })
             .collect::<Result<Vec<_>, CardProtocolError>>()?;
 

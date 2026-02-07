@@ -5,7 +5,7 @@ mod test {
     use crate::BarnettSmartProtocol;
 
     use ark_ff::UniformRand;
-    use ark_std::{rand::Rng, Zero};
+    use ark_std::rand::Rng;
     use proof_base::error::CryptoError;
     use proof_base::utils::permutation::Permutation;
     use proof_base::utils::rand::sample_vector;
