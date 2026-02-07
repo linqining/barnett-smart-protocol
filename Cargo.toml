@@ -1,0 +1,17 @@
+[package]
+name = "barnett-smart-protocol"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+proof-base = { git = "https://github.com/linqining/proof-base.git", branch = "master"}
+thiserror = "2.0.18"
+ark-ff = "0.5.0"
+ark-serialize = "0.5.0"
+ark-std = "0.5.0"
+ark-ec = "0.5.0"
+ark-bls12-381 = "0.5.0"
+anyhow = "1.0.55"
+ark-marlin = "0.3.0"
+blake2="0.10.6"
+rand="0.9.2"
