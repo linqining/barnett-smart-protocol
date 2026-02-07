@@ -5,7 +5,7 @@ macro_rules! to_bytes {
     ($($x:expr),*) => ({
         let mut buf = vec![];
         $(
-            $x.serialize_compressed(&mut buf).map_err(|e| crate::error::CardProtocolError::IoError(e.to_string())); //todo 这里应该用ioerror更合适
+            let _ = $x.serialize_compressed(&mut buf).map_err(|e| crate::error::CardProtocolError::IoError(e.to_string()));
         )*
         Ok(buf)
     })
@@ -18,4 +18,3 @@ macro_rules! to_bytes {
 //     bytes.write_u32::<BigEndian>(self.statement.n as u32).unwrap();
 //     bytes
 // }
-

@@ -28,20 +28,20 @@ mod test {
     use ark_std::{rand::Rng, Zero};
     use proof_base::error::CryptoError;
     use proof_base::zkp::proofs::chaum_pedersen_dl_equality;
-    use rand::thread_rng;
+    use ark_std::rand::thread_rng;
 
     // Choose elliptic curve setting
-    type Curve = starknet_curve::Projective;
-    type Scalar = starknet_curve::Fr;
+    type Curve = ark_bls12_381::G1Projective;
+    type Scalar = ark_bls12_381::Fr;
 
     // Instantiate concrete type for our card protocol
-    type CardProtocol = discrete_log_cards::DLCards<Curve>;
-    type CardParameters = discrete_log_cards::Parameters<Curve>;
-    type PublicKey = discrete_log_cards::PublicKey<Curve>;
-    type SecretKey = discrete_log_cards::PlayerSecretKey<Curve>;
+    type CardProtocol = barnett_smart_protocol::DLCards<Curve>;
+    type CardParameters = barnett_smart_protocol::Parameters<Curve>;
+    type PublicKey = barnett_smart_protocol::PublicKey<Curve>;
+    type SecretKey = barnett_smart_protocol::PlayerSecretKey<Curve>;
 
-    type Card = discrete_log_cards::Card<Curve>;
-    type MaskedCard = discrete_log_cards::MaskedCard<Curve>;
+    type Card = barnett_smart_protocol::Card<Curve>;
+    type MaskedCard = barnett_smart_protocol::MaskedCard<Curve>;
 
     type MaskingProof = chaum_pedersen_dl_equality::proof::Proof<Curve>;
 

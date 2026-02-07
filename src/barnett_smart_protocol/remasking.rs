@@ -31,7 +31,7 @@ mod test {
     use ark_std::{rand::Rng, Zero};
     use proof_base::error::CryptoError;
     use proof_base::zkp::proofs::chaum_pedersen_dl_equality;
-    use rand::thread_rng;
+    use ark_std::rand::thread_rng;
 
     // Choose elliptic curve setting
     type Curve = ark_bls12_381::G1Projective;

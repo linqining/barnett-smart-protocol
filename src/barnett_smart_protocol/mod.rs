@@ -138,7 +138,8 @@ impl<C: CurveGroup> BarnettSmartProtocol for DLCards<C> {
         sk: &Self::PlayerSecretKey,
         player_public_info: &B,
     ) -> Result<Self::ZKProofKeyOwnership, CryptoError> {
-        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&to_bytes![KEY_OWN_RNG_SEED, player_public_info]?);
+        let seed_bytes = to_bytes![KEY_OWN_RNG_SEED, player_public_info]?;
+        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&seed_bytes);
         schnorr_identification::SchnorrIdentification::prove(
             rng,
             &pp.enc_parameters.generator,
@@ -154,8 +155,8 @@ impl<C: CurveGroup> BarnettSmartProtocol for DLCards<C> {
         player_public_info: &B,
         proof: &Self::ZKProofKeyOwnership,
     ) -> Result<(), CryptoError> {
-        let mut fs_rng =
-            FiatShamirRng::<Blake2s>::from_seed(&to_bytes![KEY_OWN_RNG_SEED, player_public_info]?);
+        let seed_bytes = to_bytes![KEY_OWN_RNG_SEED, player_public_info]?;
+        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&seed_bytes);
         schnorr_identification::SchnorrIdentification::verify(
             &pp.enc_parameters.generator,
             pk,
@@ -197,9 +198,11 @@ impl<C: CurveGroup> BarnettSmartProtocol for DLCards<C> {
         let negative_original = original_card.0.mul(minus_one).into_affine();
 
         let statement_cipher = masked_card.1 + negative_original;
-        let cp_statement = chaum_pedersen_dl_equality::Statement::new(&masked_card.0, &statement_cipher.into());
+        let statement_cipher_affine = statement_cipher.into();
+        let cp_statement = chaum_pedersen_dl_equality::Statement::new(&masked_card.0, &statement_cipher_affine);
 
-        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&MASKING_RNG_SEED.iter().as_slice());
+        let seed_bytes = MASKING_RNG_SEED.to_vec();
+        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&seed_bytes);
         let proof = chaum_pedersen_dl_equality::DLEquality::prove(
             rng,
             &cp_parameters,
@@ -226,9 +229,11 @@ impl<C: CurveGroup> BarnettSmartProtocol for DLCards<C> {
         let minus_one = -Self::Scalar::one();
         let negative_original = card.0.mul(minus_one).into_affine();
         let statement_cipher = masked_card.1 + negative_original;
-        let cp_statement = chaum_pedersen_dl_equality::Statement::new(&masked_card.0, &statement_cipher);
+        let statement_cipher_conv = statement_cipher.into();
+        let cp_statement = chaum_pedersen_dl_equality::Statement::new(&masked_card.0, &statement_cipher_conv);
 
-        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(MASKING_RNG_SEED.iter().as_slice());
+        let seed_bytes = MASKING_RNG_SEED.to_vec();
+        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&seed_bytes);
         chaum_pedersen_dl_equality::DLEquality::verify(
             &cp_parameters,
             &cp_statement,
@@ -257,7 +262,8 @@ impl<C: CurveGroup> BarnettSmartProtocol for DLCards<C> {
         let cp_statement =
             chaum_pedersen_dl_equality::Statement::new(&statement_cipher.0, &statement_cipher.1);
 
-        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&REMASKING_RNG_SEED.iter());
+        let seed_bytes = REMASKING_RNG_SEED.to_vec();
+        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&seed_bytes);
         let proof = chaum_pedersen_dl_equality::DLEquality::prove(
             rng,
             &cp_parameters,
@@ -287,7 +293,8 @@ impl<C: CurveGroup> BarnettSmartProtocol for DLCards<C> {
         let cp_statement =
             chaum_pedersen_dl_equality::Statement::new(&statement_cipher.0, &statement_cipher.1);
 
-        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&to_bytes![REMASKING_RNG_SEED]?);
+        let seed_bytes = REMASKING_RNG_SEED.to_vec(); 
+        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&seed_bytes);
         chaum_pedersen_dl_equality::DLEquality::verify(
             &cp_parameters,
             &cp_statement,
@@ -304,7 +311,7 @@ impl<C: CurveGroup> BarnettSmartProtocol for DLCards<C> {
         masked_card: &Self::MaskedCard,
     ) -> Result<(Self::RevealToken, Self::ZKProofReveal), CardProtocolError> {
         let reveal_token: RevealToken<C> =
-            el_gamal::Plaintext(masked_card.0.into().mul(sk.into_repr()).into_affine());
+            el_gamal::Plaintext(masked_card.0.into().mul(*sk).into_affine());
 
         // Map to Chaum-Pedersen parameters
         let cp_parameters = chaum_pedersen_dl_equality::Parameters::new(
@@ -315,7 +322,8 @@ impl<C: CurveGroup> BarnettSmartProtocol for DLCards<C> {
         // Map to Chaum-Pedersen parameters
         let cp_statement = chaum_pedersen_dl_equality::Statement::new(&reveal_token.0, pk);
 
-        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&to_bytes![REVEAL_RNG_SEED]?);
+        let seed_bytes = REVEAL_RNG_SEED.to_vec(); 
+        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&seed_bytes);
         let proof = chaum_pedersen_dl_equality::DLEquality::prove(
             rng,
             &cp_parameters,
@@ -343,7 +351,8 @@ impl<C: CurveGroup> BarnettSmartProtocol for DLCards<C> {
         // Map to Chaum-Pedersen parameters
         let cp_statement = chaum_pedersen_dl_equality::Statement::new(&reveal_token.0, pk);
 
-        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&to_bytes![REVEAL_RNG_SEED]?);
+        let seed_bytes = REVEAL_RNG_SEED.to_vec(); 
+        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&seed_bytes);
         chaum_pedersen_dl_equality::DLEquality::verify(
             &cp_parameters,
             &cp_statement,
@@ -404,7 +413,8 @@ impl<C: CurveGroup> BarnettSmartProtocol for DLCards<C> {
 
         let witness = shuffle::Witness::new(permutation, masking_factors);
 
-        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&SHUFFLE_RNG_SEED.iter());
+        let seed_bytes = SHUFFLE_RNG_SEED.to_vec();
+        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&seed_bytes);
         let proof = shuffle::ShuffleArgument::prove(
             rng,
             &shuffle_parameters,
@@ -432,7 +442,8 @@ impl<C: CurveGroup> BarnettSmartProtocol for DLCards<C> {
 
         let shuffle_statement = shuffle::Statement::new(original_deck, shuffled_deck, pp.m, pp.n);
 
-        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&to_bytes![SHUFFLE_RNG_SEED]?);
+        let seed_bytes = SHUFFLE_RNG_SEED.to_vec(); 
+        let mut fs_rng = FiatShamirRng::<Blake2s>::from_seed(&seed_bytes);
         shuffle::ShuffleArgument::verify(
             &shuffle_parameters,
             &shuffle_statement,
