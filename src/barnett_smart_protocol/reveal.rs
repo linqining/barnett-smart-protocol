@@ -5,7 +5,6 @@ use crate::Reveal;
 use ark_ec::CurveGroup;
 use ark_ff::One;
 use proof_base::homomorphic_encryption::{el_gamal, el_gamal::ElGamal};
-use rand::rand_core::block::CryptoBlockRng;
 
 impl<C: CurveGroup> Reveal<C::ScalarField, ElGamal<C>> for RevealToken<C> {
     fn reveal(

@@ -12,6 +12,7 @@ use std::ops::{Add, Mul};
 
 pub mod barnett_smart_protocol;
 pub mod error;
+pub mod utils;
 
 pub trait Mask<Scalar: Field, Enc: HomomorphicEncryptionScheme<Scalar>> {
     fn mask(
@@ -84,7 +85,7 @@ pub trait BarnettSmartProtocol {
     ) -> Result<(Self::PlayerPublicKey, Self::PlayerSecretKey), CardProtocolError>;
 
     /// Prove in zero knowledge that the owner of a public key `pk` knows the corresponding secret key `sk`
-    fn prove_key_ownership<B: ToBytes, R: Rng>(
+    fn prove_key_ownership<B: CanonicalSerialize, R: Rng>(
         rng: &mut R,
         pp: &Self::Parameters,
         pk: &Self::PlayerPublicKey,
@@ -93,7 +94,7 @@ pub trait BarnettSmartProtocol {
     ) -> Result<Self::ZKProofKeyOwnership, CryptoError>;
 
     /// Verify a proof od key ownership
-    fn verify_key_ownership<B: ToBytes>(
+    fn verify_key_ownership<B: CanonicalSerialize>(
         pp: &Self::Parameters,
         pk: &Self::PlayerPublicKey,
         player_public_info: &B,
@@ -101,7 +102,7 @@ pub trait BarnettSmartProtocol {
     ) -> Result<(), CryptoError>;
 
     /// Use all the public keys and zk-proofs to compute a verified aggregate public key
-    fn compute_aggregate_key<B: ToBytes>(
+    fn compute_aggregate_key<B: CanonicalSerialize>(
         pp: &Self::Parameters,
         player_keys_proof_info: &Vec<(Self::PlayerPublicKey, Self::ZKProofKeyOwnership, B)>,
     ) -> Result<Self::AggregatePublicKey, CardProtocolError>;

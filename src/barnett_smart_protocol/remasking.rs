@@ -1,6 +1,8 @@
 use crate::barnett_smart_protocol::MaskedCard;
 use crate::error::CardProtocolError;
 use crate::{Mask, Remask};
+use ark_ff::Zero;
+
 
 use ark_ec::CurveGroup;
 use proof_base::homomorphic_encryption::{el_gamal, el_gamal::ElGamal};
@@ -32,8 +34,8 @@ mod test {
     use rand::thread_rng;
 
     // Choose elliptic curve setting
-    type Curve = bl::Projective;
-    type Scalar = starknet_curve::Fr;
+    type Curve = ark_bls12_381::G1Projective;
+    type Scalar = ark_bls12_381::Fr;
 
     // Instantiate concrete type for our card protocol
     type CardProtocol = barnett_smart_protocol::DLCards<Curve>;

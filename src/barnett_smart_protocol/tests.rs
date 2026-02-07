@@ -1,30 +1,30 @@
 #[cfg(test)]
 mod test {
-    use crate::discrete_log_cards;
+    use crate::barnett_smart_protocol;
     use crate::error::CardProtocolError;
     use crate::BarnettSmartProtocol;
 
     use ark_ff::UniformRand;
     use ark_std::{rand::Rng, Zero};
-    use proof_essentials::error::CryptoError;
-    use proof_essentials::utils::permutation::Permutation;
-    use proof_essentials::utils::rand::sample_vector;
+    use proof_base::error::CryptoError;
+    use proof_base::utils::permutation::Permutation;
+    use proof_base::utils::rand::sample_vector;
     use rand::thread_rng;
     use std::iter::Iterator;
 
     // Choose elliptic curve setting
-    type Curve = starknet_curve::Projective;
-    type Scalar = starknet_curve::Fr;
+    type Curve = ark_bls12_381::G1Projective;
+    type Scalar = ark_bls12_381::Fr;
 
     // Instantiate concrete type for our card protocol
-    type CardProtocol = discrete_log_cards::DLCards<Curve>;
-    type CardParameters = discrete_log_cards::Parameters<Curve>;
-    type PublicKey = discrete_log_cards::PublicKey<Curve>;
-    type SecretKey = discrete_log_cards::PlayerSecretKey<Curve>;
+    type CardProtocol = barnett_smart_protocol::DLCards<Curve>;
+    type CardParameters = barnett_smart_protocol::Parameters<Curve>;
+    type PublicKey = barnett_smart_protocol::PublicKey<Curve>;
+    type SecretKey = barnett_smart_protocol::PlayerSecretKey<Curve>;
 
-    type Card = discrete_log_cards::Card<Curve>;
-    type MaskedCard = discrete_log_cards::MaskedCard<Curve>;
-    type RevealToken = discrete_log_cards::RevealToken<Curve>;
+    type Card = barnett_smart_protocol::Card<Curve>;
+    type MaskedCard = barnett_smart_protocol::MaskedCard<Curve>;
+    type RevealToken = barnett_smart_protocol::RevealToken<Curve>;
 
     /// Setup `n` players. We use a Scalar to represent player public information
     fn setup_players<R: Rng>(
