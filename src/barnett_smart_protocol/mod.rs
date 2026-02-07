@@ -31,6 +31,7 @@ mod masking;
 mod remasking;
 mod reveal;
 mod tests;
+mod player;
 
 pub struct DLCards<C: CurveGroup> {
     _group: PhantomData<&'static C>,

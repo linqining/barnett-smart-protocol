@@ -11,6 +11,7 @@ mod test {
     use proof_base::utils::rand::sample_vector;
     use ark_std::rand::thread_rng;
     use std::iter::Iterator;
+    use crate::barnett_smart_protocol::player::PlayerInfo;
 
     // Choose elliptic curve setting
     type Curve = ark_bls12_381::G1Projective;
@@ -57,23 +58,24 @@ mod test {
 
         let (pk, sk) = CardProtocol::player_keygen(rng, &parameters).unwrap();
                 // let player_name = b"Alice";
-        let player_name = Scalar::rand(rng);
+        // let player_name = Scalar::rand(rng);
+        let player_info = PlayerInfo::new(b"Alice".to_vec());
 
         let p1_keyproof =
-            CardProtocol::prove_key_ownership(rng, &parameters, &pk, &sk, &player_name).unwrap();
+            CardProtocol::prove_key_ownership(rng, &parameters, &pk, &sk, &player_info).unwrap();
 
         assert_eq!(
             Ok(()),
-            CardProtocol::verify_key_ownership(&parameters, &pk, &player_name, &p1_keyproof)
+            CardProtocol::verify_key_ownership(&parameters, &pk, &player_info, &p1_keyproof)
         );
 
         let other_key = Scalar::rand(rng);
         let wrong_proof =
-            CardProtocol::prove_key_ownership(rng, &parameters, &pk, &other_key, &player_name)
+            CardProtocol::prove_key_ownership(rng, &parameters, &pk, &other_key, &player_info)
                 .unwrap();
 
         assert_eq!(
-            CardProtocol::verify_key_ownership(&parameters, &pk, &player_name, &wrong_proof),
+            CardProtocol::verify_key_ownership(&parameters, &pk, &player_info, &wrong_proof),
             Err(CryptoError::ProofVerificationError(String::from(
                 "Schnorr Identification"
             )))
